@@ -27,10 +27,13 @@ function game() {
     [' ', ' ', ' '],
     [' ', ' ', ' ']
   ]
-
+  //create a board game and add properties
   for(let row = 0; row < ROWS; row++) {
     for(let column = 0; column < COLUMNS; column++) {
+      //create div
       var block = document.createElement("div");
+      //add id for each div 
+      //id = 00, 01, 02, 10, 11, 12, 20, 21, 22
       block.id = row.toString() + column.toString();
       block.classList.add("block");
       if(row == 0 || row == 1) {
@@ -47,19 +50,20 @@ function game() {
 
 //player and computer take turn to play
 function takeTurn(block) {
+  //split string id and convert into an integer array
   let ij = splitIDintoIndex(block.target.id);
   //check if a spot in the board is empty to avoid accidentally clicking that spot twice
   //then the player takes a turn first and then the computer
   if(board[ij[0]][ij[1]] == ' ') {
     Click(block.target.id, player);
-    if(!check_draw()  && !playerWon) {
-    //check if it is a draw, if not, computer's turn 
+    //check if not a draw and player hasn't won, if so, computer's turn
+    if(!check_draw()  && !playerWon) { 
       Click(bestMove(), comp);
     }
   } 
 }
 
-//player turn
+//mark a block that is chose
 function Click(where, p) {
   //the type of id is string, so split it and convert each string into type integer
   let xy = splitIDintoIndex(where);
@@ -73,7 +77,7 @@ function Click(where, p) {
     document.getElementById(where).classList.add("player-turn");
   }
   let win = check_win(board, p);
-  //if win != null, game over 
+  //if win != null, means someone has won, if so, game over 
   if(win) {
     game_over(win);
     displayPointAndWinner(win);
@@ -108,9 +112,12 @@ function emptySpot() {
   }
   return empty_spot;
 }
-
+//pick random position in empty spots
 function bestMove() {
-  return emptySpot()[0];
+  let array_empty_spot = emptySpot();
+  let num = array_empty_spot.length;
+  let random_move = Math.floor(Math.random() * num);
+  return array_empty_spot[random_move];
 }
 
 //check if player won by going through player's plays in the board
@@ -128,7 +135,9 @@ function check_win(b, p) {
   //loop through each element in subarray of casesToWin
   //check if player has played spots to win (example [00, 01, 02]).
   //if player filled those spots, obvious the index are larger than -1, increase count.
-  //if count == 3, it means player has played a win case, set won has the index which is in casesToWin ([00, 01, 02] is index 0) and who is winner.
+  //if count == 3, it means player has played a win case, set won has the index which is in casesToWin (for example[00, 01, 02] is index 0) and who is winner.
+  //break loop and return won object
+  //no one wins, return won = null
   let won = null;
   let count = 0;
   for(let i = 0; i < casesToWin.length; i++) {
@@ -185,5 +194,3 @@ function displayPointAndWinner(won) {
     document.querySelector(".score .display").innerText = "Computer won!"
   }
 }
-
-
